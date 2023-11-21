@@ -208,6 +208,9 @@ class TemporalClipVideo(nn.Module):
         else:
             img_encode = self.model.encode_image(x)        
          
+        print('img_encode')
+        print(img_encode)
+
         if self.training:
             # img encode [bz, feat_size]
             # text_dict  {id: [400, feat_size]},
@@ -250,6 +253,9 @@ class TemporalClipVideo(nn.Module):
             # img_encode [bz, feat_size]
             # dynamic_clf shape [type_num * cls_num, feat_size]
             img_encode /= img_encode.norm(dim=-1, keepdim=True)
+
+            print('img_encode in caso di training c e una normalizzazione')
+            print(img_encode)
             
             if self.tune_head:
                 norm_head = self.head / self.head.norm(dim=-1, keepdim=True)
@@ -275,6 +281,10 @@ class TemporalClipVideo(nn.Module):
                 with torch.no_grad():
                     raw_img_encode = self.raw_model.encode_image(x)
                     raw_img_encode /= raw_img_encode.norm(dim=-1, keepdim=True)
+
+                    print('raw_img_encode in caso di keep_raw model e ensemble o distillation')
+                    print(img_encode)
+
                     raw_pred = self.raw_model.logit_scale.exp() * raw_img_encode @ self.dynamic_classifier.T
                     raw_pred = raw_pred.reshape(bz, clip_len, -1).mean(1)
 
