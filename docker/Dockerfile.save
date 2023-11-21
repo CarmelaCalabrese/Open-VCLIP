@@ -1,0 +1,37 @@
+ARG DEBIAN_FRONTEND=noninteractive
+FROM nvidia/cuda:11.6.2-cudnn8-devel-ubuntu20.04
+
+RUN apt-get update && apt install -y git nano vim wget
+
+### Installing Open-VCLIP
+RUN git clone https://github.com/wengzejia1/Open-VCLIP.git /Open-VCLIP
+WORKDIR /Open-VCLIP
+
+ENV PATH="/root/miniconda3/bin:${PATH}"
+ARG PATH="/root/miniconda3/bin:${PATH}"
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+    && mkdir /root/.conda \
+    && bash Miniconda3-latest-Linux-x86_64.sh -b \
+    && rm -f Miniconda3-latest-Linux-x86_64.sh
+
+#Environment
+RUN conda create -n ivnet python=3.8.13 pip conda activate ivnet
+SHELL ["conda","run","-n","dualcoop","/bin/bash","-c"]
+
+#Install pytorch for cuda 11.7
+RUN pip install torch==2.0.1+cu117 torchvision==0.15.2+cu117 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cu117
+RUN pip install pycocotools randaugment
+
+### Installing Dassl
+# Clone this repo
+RUN git clone https://github.com/KaiyangZhou/Dassl.pytorch.git
+WORKDIR /DualCoOp/Dassl.pytorch/
+
+# Install Dassl dependencies
+RUN pip install -r requirements.txt
+
+# Install this library (no need to re-build if the source code is modified)
+RUN python setup.py develop
+
+WORKDIR /DualCoOp
+ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "dualcoop", "/bin/bash", "-c"]
