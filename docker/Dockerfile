@@ -4,7 +4,7 @@ FROM nvidia/cuda:11.1.1-cudnn8-devel-ubuntu20.04
 RUN apt-get update && apt install -y git nano vim wget
 
 ### Installing DualCoOp
-RUN git clone https://github.com/wengzejia1/Open-VCLIP.git /Open-VCLIP
+RUN git clone https://github.com/CarmelaCalabrese/Open-VCLIP.git /Open-VCLIP
 WORKDIR /Open-VCLIP
 
 ENV PATH="/root/miniconda3/bin:${PATH}"
@@ -44,5 +44,5 @@ RUN pip install -e detectron2_repo
 RUN pip install 'git+https://github.com/facebookresearch/fairscale'
 
 RUN export PYTHONPATH=/path/to/OpenVCLIP/slowfast:$PYTHONPATH
-WORKDIR /OpenVCLIP
+WORKDIR /Open-VCLIP
 #RUN python setup.py build develop
