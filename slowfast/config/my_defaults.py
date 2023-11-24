@@ -1258,7 +1258,7 @@ _C.DEMO.COMMON_CLASS_NAMES = [
 _C.DEMO.SLOWMO = 1
 
 # Add custom config with default values.
-custom_config.add_custom_config(_C)
+my_custom_config.add_custom_config(_C)
 
 
 def assert_and_infer_cfg(cfg):
